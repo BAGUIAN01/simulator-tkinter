@@ -1,0 +1,120 @@
+En début de  seance
+===================
+1) Copier le repertoire du sujet de labos :
+  - /home/TP/modules/sujets/CAI/TkInter/Generator
+--> cp -r /home/TP/modules/sujets/CAI/TkInter/Generator $HOME/chemin_acces_repertoire_CAI_TkInter
+
+2) Tester les applications :
+
+--> python simulators.py
+--> python main.py
+
+La première application (simulators.py) illustre le calcul et la visualisation de :
+   1- mouvement vibratoire harmonique
+   2- équation différentielle de Lotka-Volterra
+   3- suite logistique
+
+La deuxième application (generator.py) propose une IHM pour :
+   - contrôler un mouvement vibratoire harmonique.
+
+Objectifs
+=========
+
+L'objectif de ce labo est de réaliser une IHM  qui permettrait 
+de contrôler les paramètres de différents modèles de signaux :
+
+ 1) d'oscilloscope (equations de mouvement vibratoire harmonique)
+ 2) d'évolution de population proies-prédateurs  (equations de Lotka-Volterra)
+ 3) dynamique de population  (equation logistique, modèle de verhulst)
+ 4) ...
+Sans avoir à tout refaire (from scratch) lorsque l'on change de modèle.
+
+Dans un premier temps on implémentera une application de simulateur d'oscilloscope  (mouvement vibratoire harmonique).
+Afin de faciliter les développements et de pouvoir réutiliser cette application dans différents contextes 
+le développement de l'application se fera en se basant sur les patrons de conception Observer et MVC.
+
+Archivage
+=========
+En fin de séance, à partir du repertoire de travail :  $HOME/chemin_acces_repertoire_CAI/Dupond_Dupont_TkInter
+
+1) se déplacer sur le repertoire parent :
+
+--> cd ..
+
+2) Creer une archive Dupond_Dupont_TkInter.tgz du repertoire Dupond_Dupont_TkInter/ :
+-
+-> tar zcvf Dupond_Dupont_TkInter.tgz Dupond_Dupont_TkInter/
+
+3) Deposer cette archive sous le repertoire de rendu de travail  : 
+
+--> cp Dupond_Dupont_TkInter.tgz /home/TP/TPrendu/nedelec/CAI/TkInter
+
+Attention
+---------
+VERIFIER que l'archive n'est pas vide et qu'elle contient les fichiers de l'application : 
+--> tar ztvf Dupond_Dupont_TkInter.tgz
+
+Cette archive devra  ontenir uniquement les fichiers :
+  - controls.py   : classe Controller du modèle MVC
+  - generator.py  : classe Generator du modèle MVC
+  - main.py       : application principale (le point d'entrée pour tester votre travail)
+  - observer.py   : classes (Observer, Subject) du  modèle Observer
+  - oscillo.opt   : fichier de configuration d'options (propriétés des widgets)
+  - simulators.py : illustration de différents types de signaux que l'on pourrait contrôler dans une IHM
+  - screen.py     : classe Screen du modèle MVC
+  - Tests         : programmes de test utiles  pour developper l'application
+  - TODO.txt      : ce fichier en cours de lecture !
+ 
+
+L'application sera à développer en trois temps :
+
+Paramétrage d'un seul signal
+============================
+Affichage et contrôle d'un signal ("X") dans l'application  :
+ 1) décomposer la classe Generator initiale de l'application principale (main.py) suivant les modèles  Observer, MVC :
+      - Modèle : classe Generator, héritage Subject (generator.py)
+      - Vue  : classe Screen,héritage Observer  (screen.py)
+      - Controleur : classe Controller, connait le modèle et la vue (controls.py)
+ 2) contrôler le signal, par des sliders (Scale), en amplitude, frequence et phase 
+ 3) contrôler le nombre d'harmoniques du signal par un slider 
+ 4) contrôler les harmoniques paires, impaires par des boutons à comportement radio  (Radiobutton)
+ 5) agencer les contrôleurs du signal dans un conteneur (Frame, LabelFrame ...)
+ 6) réagencer automatiquement les composants graphiques en cas de retaillage de la fenetre
+ 7) configurer l'IHM (couleur,texte, positionnement des sliders ...) dans un fichier d'options (oscillo.opt)
+ 8) mettre en place une animation (after()) de spot correspondant aux elongations du signal sur le nombre d'échantillons
+ 9) inserer dans l'IHM la possibilite de parametrer le nombre d'échantillons sur la courbe du signal
+ 
+Gestion de barre de Menu 
+=========================
+On ajoutera, dans cette version, deux  menus que l'on retrouve classiquement dans les IHM :
+1) Help :
+   - About Us : informations (messagebox,filedialog  ...) avec (Nom,Prénom, e-mail)  des concepteurs de l'application
+   - About Tk : informations (messagebox,filedialog  ...) référencer l'API utilisée pour développer l'IHM
+   - About Python : informations (messagebox,filedialog  ...) référencer le langage utilisé pour développer l'IHM
+2) File :
+   - Exit : sortie d'application avec boite de dialogue (messagebox,filedialog  ...) 
+   - Open : chargement des parametres de signaux (json.load())
+   - Save : sauvegarde des parametres de signaux (json.dump())
+
+Concernant le chargement et la sauvegarde du signal dans un fichier au format json
+on pourra, dans un premier temps, sauvegarder/charger dans un fichier nommé par defaut (default.json) puis utiliser un composant d'IHM (filedialog ...) pour permettre à l'utilisateur de sauvegarder les informations en les nommant sous un répertoire de son choix.
+
+Gestion de plusieurs signaux 
+=============================
+En dernière étape, on fera  évoluer l'application précedente afin de contrôler plusieurs signaux :
+ 1) gestion d'un deuxième signal ("Y") dans la même vue
+ 2) gestion d'affichage en "X-Y" dans une fenêtre secondaire 
+ 3) gestion d'affichage d'animation de spots sur les courbes "X","Y" et "X-Y"
+
+EN dernière étape on ajoutera, dans  le menu "File", la possibilité de sauvegarde dans un fichier (format png, jpg ...) 
+l'image des signaux visualisés dans les Canvas de l'application.
+On utilisera le module PIL (Python Image Library) pour réaliser la suavegarde d'image.
+Comme pour les autres sauvegardes on offira la possibilité aux utilisateurs  de sauvegarder :
+      a) dans un nom de fichier fixé par defaut dans l'application
+      b) en utilisant une boite de dialogue pour sélectionner le répertoire et le nom de fichier de sauvegarde
+
+Reutilisation
+=============
+Reprendre la même IHM en l'adaptant aux autres modeles (Lotka-Volterra, suite logistique...)
+
+
