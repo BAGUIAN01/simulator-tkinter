@@ -1,4 +1,6 @@
 # coding: utf-8
+from view import View
+from generator import Generator
 from math import pi, sin, radians
 import sys
 import math
@@ -16,8 +18,7 @@ else:
         print("... I guess it will work !")
     import tkinter as tk
     from tkinter import filedialog
-from generator import Generator
-from view import View
+
 
 class Controller:
     def __init__(self, model, view):
@@ -26,14 +27,20 @@ class Controller:
         self.name = "control"
         self.actions_binding()
 
-
-    
-
     def actions_binding(self):
         print("Generator.actions_binding()")
         self.view.screen.bind("<Configure>", self.view.resize)
         self.view.scaleA.bind("<B1-Motion>", self.on_magnitude_action)
-    # callbacks (on_<name>_action(...) )
+        self.view.scaleF.bind("<B1-Motion>", self.on_frequence_action)
+        self.view.scaleP.bind("<B1-Motion>", self.on_phasis_action)
+        self.view.scaleHarmic.bind("<B1-Motion>", self.on_harmonic_action)
+        self.view.pair_harmonic.bind(
+            "<Button-1>", self.on_pairharmonic_action)
+        self.view.impair_harmonic.bind(
+            "<Button-1>", self.on_impairharmonic_action)
+        self.view.all_harmonic.bind(
+            "<Button-1>", self.on_allharmonic_action)
+       
 
     def on_magnitude_action(self, event):
         print("Generator.on_magnitude_action()")
@@ -41,7 +48,55 @@ class Controller:
             self.model.m = self.view.var_mag.get()
             print(f"varmag {self.model.m}")
             self.model.generate()
-            self.view.update(self.model)
+
+    def on_frequence_action(self, event):
+        print("Generator.onfreq_action()")
+        if self.model.f != self.view.var_freq.get():
+            self.model.f = self.view.var_freq.get()
+            print(f"varmag {self.model.f}")
+            self.model.generate()
+
+    def on_phasis_action(self, event):
+        print("Generator.phasis_action()")
+        if self.model.p != self.view.var_p.get():
+            self.model.p = self.view.var_p.get()
+            print(f"varmag {self.model.p}")
+            self.model.generate()
+
+    def on_harmonic_action(self, event):
+        print("Generator.harmonic_action()")
+        if self.model.harmonics != self.view.var_harmonic.get():
+            self.model.harmonics = self.view.var_harmonic.get()
+            print(f"varmag {self.model.harmonics}")
+            self.model.generate()
+
+    def on_pairharmonic_action(self, event):
+        
+        print(self.view.pair_var.get())
+        if not self.view.pair_var.get():
+            self.model.pair = True
+            self.model.impair = False
+            self.model.generate()
+        else:
+            pass
+    
+    def on_impairharmonic_action(self, event):
+        
+        print(self.view.impair_var.get())
+        if not self.view.impair_var.get():
+            self.model.pair = False
+            self.model.impair = True
+            self.model.generate()
+        else:
+            pass
+
+    def on_allharmonic_action(self, event):
+        if not self.view.all_var.get():
+            self.model.pair = True
+            self.model.impair = True
+            self.model.generate()
+        else:
+            pass
 
 
 if __name__ == "__main__":
@@ -53,5 +108,3 @@ if __name__ == "__main__":
     view.layout()
     control = Controller(model, view)
     root.mainloop()
-
-

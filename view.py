@@ -26,8 +26,8 @@ class View(Observer):
         self.parent = parent
         self.bg = bg
         self.width, self.height = width, height
-        self.name = "signal"
- 
+        self.name = "Controls"
+
         self.gui()
 
     def get_name(self):
@@ -43,16 +43,52 @@ class View(Observer):
         self.frame = tk.LabelFrame(self.parent, text=self.name)
         self.var_mag = tk.IntVar()
         self.var_mag.set(1)
+
         self.scaleA = tk.Scale(self.frame, variable=self.var_mag,
                                label="Amplitude",
                                orient="horizontal", length=250,
                                from_=0, to=5, tickinterval=1)
 
+        self.var_freq = tk.IntVar()
+        self.var_freq.set(1)
+        self.scaleF = tk.Scale(self.frame, variable=self.var_freq,
+                               label="frequence",
+                               orient="horizontal", length=250,
+                               from_=0, to=5, tickinterval=1)
+
+        self.var_p = tk.IntVar()
+        self.var_p.set(1)
+        self.scaleP = tk.Scale(self.frame, variable=self.var_p,
+                               label="Phase",
+                               orient="horizontal", length=250,
+                               from_=-50, to=50, tickinterval=1)
+
+        self.var_harmonic = tk.IntVar()
+        self.var_harmonic.set(1)
+        self.scaleHarmic = tk.Scale(self.frame, variable=self.var_harmonic,
+                                    label="Harmonic",
+                                    orient="horizontal", length=250,
+                                    from_=0, to=5, tickinterval=1)
+
+        self.frame_harmonic = tk.LabelFrame(self.parent, text="harmonic")
+        self.pair_var = tk.BooleanVar()
+        self.pair_harmonic = tk.Checkbutton(self.frame_harmonic, text="Pair",
+                                            variable=self.pair_var)
+        self.impair_var = tk.BooleanVar()
+        self.impair_harmonic = tk.Checkbutton(
+            self.frame_harmonic, text="Impair",
+            variable=self.impair_var
+        )
+        self.all_var = tk.BooleanVar()
+        self.all_harmonic = tk.Checkbutton(
+            self.frame_harmonic, text="Tout afficher",
+            variable=self.all_var
+        )
+
     def update(self, subject):
         print("Generator.update()")
         print("Update signal", self.get_name())
         if subject.signal:
-            logging.error("start")
 
             self.plot_signal(signal=subject.signal)
 
@@ -101,16 +137,24 @@ class View(Observer):
         # self.screen.pack(fill="both",padx=10,pady=20)
         # self.screen.pack(expand=True,fill="both",padx=10,pady=20)
         self.frame.pack()
-        self.scaleA.pack()
+        self.scaleA.grid(row=0, column=0,)
+        self.scaleF.grid(row=1, column=0)
+        self.scaleP.grid(row=2, column=0)
+        self.scaleHarmic.grid(row=3, column=0)
+
+        self.frame_harmonic.pack()
+        self.pair_harmonic.grid(row=0, column=0)
+        self.impair_harmonic.grid(row=0, column=1)
+        self.all_harmonic.grid(row=0, column=3)
+        # self.scaleHarmic.pack()
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     model = Generator()
-    model.generate()
     view = View(root)
     view.create_grid(8)
     view.layout()
-    view.update(model)
-    model.attach(view)
+    # model.attach(view)
+    model.generate()
     root.mainloop()

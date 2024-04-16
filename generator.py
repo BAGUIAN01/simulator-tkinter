@@ -28,6 +28,8 @@ class Generator(Subject):
         self.samples = 100
         self.units = 1
         self.name = "model"
+        self.pair = False
+        self.impair = False
 
     # properties getter/setter
 
@@ -49,7 +51,6 @@ class Generator(Subject):
     def set_magnitude(self, magnitude):
         pass
 
-
     def vibration(self, t):
         # Warning : take care of degrees_to_radians conversion on phase (self.p)
         # if you get degree from your slider, use radians() function from math module to convert
@@ -57,7 +58,18 @@ class Generator(Subject):
         harmo = int(self.harmonics)
         sum = 0
         for h in range(1, harmo+1):
-            sum = sum + (m/h)*sin(2*pi*(f*h)*t)-p
+            if self.pair and self.impair:
+                sum = sum + (m/h)*sin(2*pi*(f*h)*t - p)
+            elif self.pair and not self.impair:
+                if h % 2 == 0:
+                    sum = sum + (m/h)*sin(2*pi*(f*h)*t - p)
+                else:
+                    pass
+            elif not self.pair and self.impair:
+                if h % 2 != 0:
+                    sum = sum + (m/h)*sin(2*pi*(f*h)*t - p)
+                else:
+                    pass
         return sum
 
     def generate(self):
@@ -73,5 +85,3 @@ class Generator(Subject):
 if __name__ == "__main__":
     model = Generator()
     print(model)
-   
-
