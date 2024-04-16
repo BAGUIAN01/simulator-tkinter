@@ -31,16 +31,17 @@ class Controller:
 
     def actions_binding(self):
         print("Generator.actions_binding()")
-        self.screen.bind("<Configure>", self.resize)
-        self.scaleA.bind("<B1-Motion>", self.on_magnitude_action)
+        self.view.screen.bind("<Configure>", self.view.resize)
+        self.view.scaleA.bind("<B1-Motion>", self.on_magnitude_action)
     # callbacks (on_<name>_action(...) )
 
     def on_magnitude_action(self, event):
         print("Generator.on_magnitude_action()")
-        if self.m != self.var_mag.get():
-            self.m = self.var_mag.get()
+        if self.model.m != self.view.var_mag.get():
+            self.model.m = self.view.var_mag.get()
+            print(f"varmag {self.model.m}")
             self.model.generate()
-            self.update()
+            self.view.update(self.model)
 
 
 if __name__ == "__main__":

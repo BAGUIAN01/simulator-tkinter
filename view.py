@@ -4,6 +4,7 @@ from observer import Observer
 from math import pi, sin, radians
 import sys
 import math
+import logging
 major = sys.version_info.major
 minor = sys.version_info.minor
 if major == 2 and minor == 7:
@@ -25,7 +26,8 @@ class View(Observer):
         self.parent = parent
         self.bg = bg
         self.width, self.height = width, height
-        self.name = "view"
+        self.name = "signal"
+ 
         self.gui()
 
     def get_name(self):
@@ -33,18 +35,6 @@ class View(Observer):
 
     def set_name(self, name):
         self.name = name
-
-    def get_signal(self):
-        return self.signal
-
-    def set_signal(self, signal):
-        self.signal = signal
-
-    def get_magnitude(self):
-        pass
-
-    def set_magnitude(self, magnitude):
-        pass
 
     def gui(self):
         print("Generator.gui()")
@@ -62,15 +52,17 @@ class View(Observer):
         print("Generator.update()")
         print("Update signal", self.get_name())
         if subject.signal:
-            self.plot_signal()
+            logging.error("start")
 
-    def plot_signal(self, name="X", color="red"):
+            self.plot_signal(signal=subject.signal)
+
+    def plot_signal(self, name="X", signal=[], color="red"):
         print("Generator.plot_signal()")
-        if self.signal and len(self.signal) > 1:
+        if signal and len(signal) > 1:
             w, h = self.width, self.height
             if self.screen.find_withtag(name):
                 self.screen.delete(name)
-            plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in self.signal]
+            plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
             self.screen.create_line(
                 plots, fill=color, smooth=1, width=3, tags=name)
         return
@@ -115,10 +107,10 @@ class View(Observer):
 if __name__ == "__main__":
     root = tk.Tk()
     model = Generator()
+    model.generate()
     view = View(root)
     view.create_grid(8)
     view.layout()
     view.update(model)
     model.attach(view)
-    model.generate()
     root.mainloop()

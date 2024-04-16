@@ -49,11 +49,6 @@ class Generator(Subject):
     def set_magnitude(self, magnitude):
         pass
 
-    def on_magnitude_action(self, event):
-        print("Generator.on_magnitude_action()")
-        if self.m != self.var_mag.get():
-            self.m = self.var_mag.get()
-            self.generate()
 
     def vibration(self, t):
         # Warning : take care of degrees_to_radians conversion on phase (self.p)
@@ -71,6 +66,7 @@ class Generator(Subject):
         samples = int(self.samples)
         for t in range(samples+1):
             self.signal.append([t/samples, self.vibration(t/samples)])
+        self.notify()
         return self.signal
 
 
