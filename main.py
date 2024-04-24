@@ -23,6 +23,7 @@ else:
 
 if __name__ == "__main__":
     root = tk.Tk()
+   
     model = Generator()
     view = View(root)
     view.create_grid(8)

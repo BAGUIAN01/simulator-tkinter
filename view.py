@@ -71,18 +71,21 @@ class View(Observer):
                                     from_=0, to=5, tickinterval=1)
 
         self.frame_harmonic = tk.LabelFrame(self.parent, text="harmonic")
-        self.pair_var = tk.BooleanVar()
-        self.pair_harmonic = tk.Checkbutton(self.frame_harmonic, text="Pair",
-                                            variable=self.pair_var)
-        self.impair_var = tk.BooleanVar()
-        self.impair_harmonic = tk.Checkbutton(
+        self.pair_var = tk.IntVar()
+        self.pair_var.set(1)
+        self.pair_harmonic = tk.Radiobutton(self.frame_harmonic, text="Pair",
+                                            value=self.pair_var)
+        self.impair_var = tk.IntVar()
+        self.impair_var.set(2)
+        self.impair_harmonic = tk.Radiobutton(
             self.frame_harmonic, text="Impair",
-            variable=self.impair_var
+            value=self.impair_var
         )
-        self.all_var = tk.BooleanVar()
-        self.all_harmonic = tk.Checkbutton(
+        self.all_var = tk.IntVar()
+        self.all_var.set(3)
+        self.all_harmonic = tk.Radiobutton(
             self.frame_harmonic, text="Tout afficher",
-            variable=self.all_var
+            value=self.all_var
         )
 
     def update(self, subject):
@@ -125,19 +128,16 @@ class View(Observer):
         print("Generator.resize()")
         self.width, self.height = event.width, event.height
         print("width,height", self.width, self.height)
-        # TO DO  :
-        # delete existing grid
-        # create grid with new dimension
-        # plot signal with new dimension
+        # self.screen.config(width=self.width, height=self.height)
+        self.create_grid(8)
+        self.plot_signal()
 
     def layout(self):
         print("Generator.layout()")
         self.screen.pack()
-        # self.screen.pack(fill="x")
-        # self.screen.pack(fill="both",padx=10,pady=20)
-        # self.screen.pack(expand=True,fill="both",padx=10,pady=20)
-        self.frame.pack()
-        self.scaleA.grid(row=0, column=0,)
+        self.screen.pack(expand=True, fill="both", padx=10, pady=20)
+        self.frame.pack(expand=True, fill="both", padx=10, pady=20)
+        self.scaleA.grid(row=0, column=0, sticky="ew", padx=10, pady=5)
         self.scaleF.grid(row=1, column=0)
         self.scaleP.grid(row=2, column=0)
         self.scaleHarmic.grid(row=3, column=0)
