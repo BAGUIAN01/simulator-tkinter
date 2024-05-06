@@ -98,7 +98,7 @@ class Controller:
 
     def on_pairharmonic_action(self, event):
 
-        if self.view.pair_var.get() == 1:
+        if self.view.harmonic_type_var.get() == 1:
             self.model.pair = True
             self.model.impair = False
             self.model.generate()
@@ -107,7 +107,7 @@ class Controller:
 
     def on_impairharmonic_action(self, event):
 
-        if self.view.impair_var.get() == 2:
+        if self.view.harmonic_type_var.get() == 2:
 
             self.model.pair = False
             self.model.impair = True
@@ -117,7 +117,8 @@ class Controller:
 
     def on_allharmonic_action(self, event):
 
-        if self.view.all_var.get() == 3:
+        if self.view.harmonic_type_var.get() == 3:
+            print(self.model.name)
 
             self.model.pair = True
             self.model.impair = True
@@ -144,6 +145,12 @@ class Controller:
             self.view.var_harmonic.set(signal_params["har"])
             self.model.pair = signal_params["harPair"]
             self.model.impair = signal_params["harOdd"]
+            if self.model.pair and self.model.impair:
+                self.view.harmonic_type_var.set(3)
+            elif self.model.pair and not self.model.impair:
+                self.view.harmonic_type_var.set(1)
+            else:
+                self.view.harmonic_type_var.set(2)
             self.model.m = self.view.var_mag.get()
             self.model.f = self.view.var_freq.get()
             self.model.p = self.view.var_p.get()

@@ -108,24 +108,27 @@ class View(Observer):
         self.divider2 = tk.Label(self.header, text="|")
         self.divider3 = tk.Label(self.header, text="|")
         self.divider4 = tk.Label(self.header, text="|")
-        self.pair_var = tk.IntVar()
-        self.pair_var.set(1)
+        
+        self.harmonic_type_var = tk.IntVar()
+        self.harmonic_type_var.set(1)
         self.pair_harmonic = tk.Radiobutton(self.header, text="Pair",
-                                            value=self.pair_var)
-        self.impair_var = tk.IntVar()
-        self.impair_var.set(2)
+                                            value=1,
+                                            variable=self.harmonic_type_var)
+    
         self.impair_harmonic = tk.Radiobutton(
             self.header, text="Impair",
-            value=self.impair_var
+            value=2,
+            variable=self.harmonic_type_var
         )
-        self.all_var = tk.IntVar()
-        self.all_var.set(3)
+
         self.all_harmonic = tk.Radiobutton(
             self.header, text="Tout afficher",
-            value=self.all_var
+            value=3,
+            variable=self.harmonic_type_var
         )
         
         self.model_var = tk.IntVar()
+        self.model_var.set(10)
         self.signal_x = tk.Radiobutton(
             self.frame_model, text="X",
             value=10,
