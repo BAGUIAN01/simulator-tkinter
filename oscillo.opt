@@ -1,0 +1,22 @@
+# styles.opt
+
+# Colors
+main_bg : #ffffff  ;# Main background color
+frame_bg : #f0f0f0 ;# Frame background color
+scale_bg : #ffffff ;# Scale background color
+btn_bg : #3498db   ;# Button background color
+btn_fg : #ffffff   ;# Button text color
+text_fg : #000000  ;# Text color
+
+# Fonts
+main_font : TkDefaultFont  ;# Main font
+btn_font : TkDefaultFont   ;# Button font
+
+# Padding
+padding : 10  ;# Padding between widgets
+
+
+[Scale.scaleA]
+font: -family {Poppins} -size 10
+foreground: #000000
+background: #ffffff

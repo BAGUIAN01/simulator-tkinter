@@ -1,5 +1,6 @@
 # coding: utf-8
 from generator import Generator
+from generator2 import Generator2
 from view import View
 from controller import Controller
 from math import pi, sin, radians
@@ -23,16 +24,22 @@ else:
 
 if __name__ == "__main__":
     root = tk.Tk()
-   
-    model = Generator()
+    root.configure(background="black")
+    root.title("Simulateur")
+    # root.option_readfile("oscillo.opt")
+
     view = View(root)
+    model_x = Generator()
+    model_y = Generator2()
     view.create_grid(8)
     view.layout()
 
-    model.attach(view)
-    model.generate()
+    model_x.attach(view)
+    model_x.generate()
+    model_y.attach(view)
+    model_y.generate()
 
-    control = Controller(model=model, view=view)
+    control = Controller(model=model_x, model_y=model_y,
+                         mode=view.signal_type, view=view)
     # control.layout()
     root.mainloop()
-
