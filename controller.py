@@ -1,6 +1,7 @@
 # coding: utf-8
 from view import View
 from generator import Generator
+from utils import TkTimer
 from math import pi, sin, radians
 import sys
 import math
@@ -33,30 +34,116 @@ class Controller:
         self.model_y = model_y
         self.model_x = model
         self.model = model
+        self.model.generate()
         self.view = view
         self.name = "control"
+        self.controls()
         self.actions_binding()
+        # self.timer = TkTimer(self.view.parent, 50, False, self.animate)
+        # self.animation_active = True
+        # self.stop_animation = False
+        # self.animate()
+
+    def animate(self):
+        if (self.model.point[0] >= 1):  # if the spot is out of the screen
+            self.model.index_animation = 0  # restart
+        print(f"les points {self.model.point}")
+        self.view.update(self.model, isanimate=True)
+
+        self.model.index_animation += 1
+
+    def controls(self):
+        self.frame = tk.LabelFrame(self.view.parent, text=self.model.name)
+        self.view.controls.add(self.frame)
+        self.var_mag = tk.IntVar()
+        self.var_mag.set(2)
+        self.scaleA = tk.Scale(self.frame, variable=self.var_mag,
+                               label="Amplitude",
+                               orient="horizontal", length=250,
+                               from_=0, to=5, tickinterval=1,
+                               )
+
+        self.var_freq = tk.IntVar()
+        self.var_freq.set(1)
+        self.scaleF = tk.Scale(self.frame, variable=self.var_freq,
+                               label="frequence",
+                               orient="horizontal", length=250,
+                               from_=0, to=5, tickinterval=1)
+
+        self.var_p = tk.IntVar()
+        self.var_p.set(1)
+        self.scaleP = tk.Scale(self.frame, variable=self.var_p,
+                               label="Phase",
+                               orient="horizontal", length=250,
+                               from_=-50, to=50, tickinterval=1)
+
+        self.n_sample = tk.IntVar()
+        self.n_sample.set(100)
+        self.scale_sample = tk.Scale(self.frame, variable=self.n_sample,
+                                     label="Echantillon",
+                                     orient="horizontal", length=250,
+                                     from_=100, to=200, tickinterval=1)
+
+        self.var_harmonic = tk.IntVar()
+        self.var_harmonic.set(1)
+        self.scaleHarmic = tk.Scale(self.frame, variable=self.var_harmonic,
+                                    label="Harmonic",
+                                    orient="horizontal", length=250,
+                                    from_=0, to=5, tickinterval=1)
+
+        self.frame_harmonics = tk.LabelFrame(self.frame, text="harmonics")
+
+        self.harmonic_type_var = tk.IntVar()
+        self.harmonic_type_var.set(1)
+        self.pair_harmonic = tk.Radiobutton(self.frame_harmonics, text="Pair",
+                                            value=1,
+                                            variable=self.harmonic_type_var)
+
+        self.impair_harmonic = tk.Radiobutton(
+            self.frame_harmonics, text="Impair",
+            value=2,
+            variable=self.harmonic_type_var
+        )
+
+        self.all_harmonic = tk.Radiobutton(
+            self.frame_harmonics, text="Tout afficher",
+            value=3,
+            variable=self.harmonic_type_var
+        )
+        self.move = tk.Button(self.frame_harmonics, text="Move")
+
+        # packing
+        self.frame.pack()
+        self.scaleA.grid(row=0, column=0)
+        self.scaleF.grid(row=1, column=0)
+        self.scaleP.grid(row=2, column=0)
+        self.scaleHarmic.grid(row=3, column=0)
+        self.frame_harmonics.grid(row=0, column=1)
+        self.pair_harmonic.grid(row=0, column=0)
+        self.impair_harmonic.grid(row=0, column=1)
+        self.all_harmonic.grid(row=0, column=2)
+        self.move.grid(row=1, column=0)
 
     def actions_binding(self):
 
         self.view.screen.bind("<Configure>", self.view.resize)
-        self.view.scaleA.bind("<B1-Motion>", self.on_magnitude_action)
-        self.view.scaleF.bind("<B1-Motion>", self.on_frequence_action)
-        self.view.scaleP.bind("<B1-Motion>", self.on_phasis_action)
-        self.view.scale_sample.bind("<B1-Motion>", self.on_sample_action)
-        self.view.scaleHarmic.bind("<B1-Motion>", self.on_harmonic_action)
-        self.view.pair_harmonic.bind(
+        self.scaleA.bind("<B1-Motion>", self.on_magnitude_action)
+        self.scaleF.bind("<B1-Motion>", self.on_frequence_action)
+        self.scaleP.bind("<B1-Motion>", self.on_phasis_action)
+        self.scale_sample.bind("<B1-Motion>", self.on_sample_action)
+        self.scaleHarmic.bind("<B1-Motion>", self.on_harmonic_action)
+        self.pair_harmonic.bind(
             "<Button-1>", self.on_pairharmonic_action)
-        self.view.impair_harmonic.bind(
+        self.impair_harmonic.bind(
             "<Button-1>", self.on_impairharmonic_action)
-        self.view.all_harmonic.bind(
+        self.all_harmonic.bind(
             "<Button-1>", self.on_allharmonic_action)
-        self.view.signal_x.bind(
-            "<Button-1>", self.on_signal_x_action)
-        self.view.signal_y.bind(
-            "<Button-1>", self.on_signal_y_action)
-        self.view.signal_xy.bind(
-            "<Button-1>", self.on_signal_xy_action)
+        # self.view.signal_x.bind(
+        #     "<Button-1>", self.on_signal_x_action)
+        # self.view.signal_y.bind(
+        #     "<Button-1>", self.on_signal_y_action)
+        # self.view.signal_xy.bind(
+        #     "<Button-1>", self.on_signal_xy_action)
         self.view.file_menu.add_command(label="Open",
                                         command=self.open_file)
 
@@ -80,35 +167,35 @@ class Controller:
 
     def on_magnitude_action(self, event):
 
-        if self.model.m != self.view.var_mag.get():
-            self.model.m = self.view.var_mag.get()
+        if self.model.m != self.var_mag.get():
+            self.model.m = self.var_mag.get()
             print(f"varmag {self.model.m}")
             self.model.generate()
 
     def on_frequence_action(self, event):
 
-        if self.model.f != self.view.var_freq.get():
-            self.model.f = self.view.var_freq.get()
+        if self.model.f != self.var_freq.get():
+            self.model.f = self.var_freq.get()
 
             self.model.generate()
 
     def on_phasis_action(self, event):
 
-        if self.model.p != self.view.var_p.get():
-            self.model.p = self.view.var_p.get()
+        if self.model.p != self.var_p.get():
+            self.model.p = self.var_p.get()
             print(f"varmag {self.model.p}")
             self.model.generate()
 
     def on_harmonic_action(self, event):
 
-        if self.model.harmonics != self.view.var_harmonic.get():
-            self.model.harmonics = self.view.var_harmonic.get()
+        if self.model.harmonics != self.var_harmonic.get():
+            self.model.harmonics = self.var_harmonic.get()
             print(f"varmag {self.model.harmonics}")
             self.model.generate()
 
     def on_pairharmonic_action(self, event):
 
-        if self.view.harmonic_type_var.get() == 1:
+        if self.harmonic_type_var.get() == 1:
             self.model.pair = True
             self.model.impair = False
             self.model.generate()
@@ -117,7 +204,7 @@ class Controller:
 
     def on_impairharmonic_action(self, event):
 
-        if self.view.harmonic_type_var.get() == 2:
+        if self.harmonic_type_var.get() == 2:
 
             self.model.pair = False
             self.model.impair = True
@@ -127,7 +214,7 @@ class Controller:
 
     def on_allharmonic_action(self, event):
 
-        if self.view.harmonic_type_var.get() == 3:
+        if self.harmonic_type_var.get() == 3:
             print(self.model.name)
 
             self.model.pair = True
@@ -240,7 +327,7 @@ class Controller:
         self.set_model()
         self.view.signal_x = self.model_x.signal
         self.view.signal_y = self.model_y.signal
-        
+
         self.view.create()
 
     def set_model(self):

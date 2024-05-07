@@ -28,8 +28,12 @@ class Generator(Subject):
         self.samples = 100
         self.units = 1
         self.name = "model"
-        self.pair = False
-        self.impair = False
+        self.pair = True
+        self.impair = True
+        
+        self.index_animation = 0
+        
+    # point = property(lambda self: self.signal[self.index_animation])
 
     # properties getter/setter
 
@@ -79,6 +83,7 @@ class Generator(Subject):
         for t in range(samples+1):
             self.signal.append([t/samples, self.vibration(t/samples)])
         self.notify()
+        self.point = self.signal[self.index_animation]
         return self.signal
 
 

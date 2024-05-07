@@ -32,7 +32,7 @@ if __name__ == "__main__":
     model_x = Generator()
     model_y = Generator2()
     view.create_grid(8)
-    view.layout()
+    # view.layout()
 
     model_x.attach(view)
     model_x.generate()

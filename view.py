@@ -33,8 +33,11 @@ class View(Observer):
         self.signal_x = []
         self.signal_y = []
 
-
         self.gui()
+
+        self.controls = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
+        self.controls.pack(side=tk.TOP, expand=tk.Y,
+                           fill=tk.BOTH, pady=2, padx=2)
 
     def create(self):
         print(self.signal_x)
@@ -42,14 +45,13 @@ class View(Observer):
         print(self.signal_y)
         self.win = tk.Toplevel(self.parent)
         self.screen_toplevel = tk.Canvas(self.win, bg=self.bg,
-                                width=self.width, height=self.height)
+                                         width=self.width, height=self.height)
         self.screen_toplevel.configure(relief="flat")
         self.screen_toplevel.pack(expand=True, fill="both", padx=10, pady=20)
         self.create_grid_toplevel(8)
         self.plot_signal_toplevel(signal=self.signal_x, color="blue")
         self.plot_signal_toplevel(signal=self.signal_y, color="red")
-        
-        
+
     def get_name(self):
         return self.name
 
@@ -60,7 +62,7 @@ class View(Observer):
         print("Generator.gui()")
         self.menubar = tk.Menu(self.parent)
         self.parent.config(menu=self.menubar)
-        
+
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
 
@@ -69,116 +71,116 @@ class View(Observer):
 
         # self.header = tk.LabelFrame(self.parent)
         # self.header.configure(relief="flat")
-        
+
         self.screen = tk.Canvas(self.parent, bg=self.bg,
                                 width=self.width, height=self.height)
         self.screen.configure(relief="flat")
+        self.screen.pack(expand=True, fill="both", padx=10, pady=20)
 
-        self.frame = tk.LabelFrame(self.parent, text="")
-        self.frame.configure(border=2)
-        self.frame_left = tk.LabelFrame(self.frame, text="X")
-        self.frame_left.configure(border=2)
-        
-        self.frame_right = tk.LabelFrame(self.frame, text="Y")
-        self.frame_right.configure(border=2)
-        self.frame_bottom = tk.LabelFrame(self.frame_left, text="")
-        self.frame_bottom.configure(border=2)
-        self.frame_harmonics = tk.LabelFrame(self.frame_bottom, text="Harmonics")
-        self.frame_harmonics.configure(border=2)
-        
-        #left contzrols
-        self.var_mag = tk.IntVar()
-        self.var_mag.set(1)
-        self.scaleA = tk.Scale(self.frame_left, variable=self.var_mag,
-                               label="Amplitude",
-                               orient="horizontal", length=250,
-                               from_=0, to=5, tickinterval=1,
-                               )
+        # self.frame = tk.LabelFrame(self.parent, text="")
+        # self.frame.configure(border=2)
+        # self.frame_left = tk.LabelFrame(self.frame, text="X")
+        # self.frame_left.configure(border=2)
 
-        self.var_freq = tk.IntVar()
-        self.var_freq.set(1)
-        self.scaleF = tk.Scale(self.frame_left, variable=self.var_freq,
-                               label="frequence",
-                               orient="horizontal", length=250,
-                               from_=0, to=5, tickinterval=1)
+        # self.frame_right = tk.LabelFrame(self.frame, text="Y")
+        # self.frame_right.configure(border=2)
+        # self.frame_bottom = tk.LabelFrame(self.frame_left, text="")
+        # self.frame_bottom.configure(border=2)
+        # self.frame_harmonics = tk.LabelFrame(self.frame_bottom, text="Harmonics")
+        # self.frame_harmonics.configure(border=2)
 
-        self.var_p = tk.IntVar()
-        self.var_p.set(1)
-        self.scaleP = tk.Scale(self.frame_left, variable=self.var_p,
-                               label="Phase",
-                               orient="horizontal", length=250,
-                               from_=-50, to=50, tickinterval=1)
+        # #left contzrols
+        # self.var_mag = tk.IntVar()
+        # self.var_mag.set(1)
+        # self.scaleA = tk.Scale(self.frame_left, variable=self.var_mag,
+        #                        label="Amplitude",
+        #                        orient="horizontal", length=250,
+        #                        from_=0, to=5, tickinterval=1,
+        #                        )
 
-        self.n_sample = tk.IntVar()
-        self.n_sample.set(100)
-        self.scale_sample = tk.Scale(self.frame_left, variable=self.n_sample,
-                                     label="Echantillon",
-                                     orient="horizontal", length=250,
-                                     from_=100, to=200, tickinterval=1)
+        # self.var_freq = tk.IntVar()
+        # self.var_freq.set(1)
+        # self.scaleF = tk.Scale(self.frame_left, variable=self.var_freq,
+        #                        label="frequence",
+        #                        orient="horizontal", length=250,
+        #                        from_=0, to=5, tickinterval=1)
 
-        self.var_harmonic = tk.IntVar()
-        self.var_harmonic.set(1)
-        self.scaleHarmic = tk.Scale(self.frame_left, variable=self.var_harmonic,
-                                    label="Harmonic",
-                                    orient="horizontal", length=250,
-                                    from_=0, to=5, tickinterval=1)
+        # self.var_p = tk.IntVar()
+        # self.var_p.set(1)
+        # self.scaleP = tk.Scale(self.frame_left, variable=self.var_p,
+        #                        label="Phase",
+        #                        orient="horizontal", length=250,
+        #                        from_=-50, to=50, tickinterval=1)
 
-        self.frame_model = tk.LabelFrame(self.frame_bottom, text="models")
+        # self.n_sample = tk.IntVar()
+        # self.n_sample.set(100)
+        # self.scale_sample = tk.Scale(self.frame_left, variable=self.n_sample,
+        #                              label="Echantillon",
+        #                              orient="horizontal", length=250,
+        #                              from_=100, to=200, tickinterval=1)
 
-        
-        self.harmonic_type_var = tk.IntVar()
-        self.harmonic_type_var.set(1)
-        self.pair_harmonic = tk.Radiobutton(self.frame_harmonics, text="Pair",
-                                            value=1,
-                                            variable=self.harmonic_type_var)
-    
-        self.impair_harmonic = tk.Radiobutton(
-            self.frame_harmonics, text="Impair",
-            value=2,
-            variable=self.harmonic_type_var
-        )
+        # self.var_harmonic = tk.IntVar()
+        # self.var_harmonic.set(1)
+        # self.scaleHarmic = tk.Scale(self.frame_left, variable=self.var_harmonic,
+        #                             label="Harmonic",
+        #                             orient="horizontal", length=250,
+        #                             from_=0, to=5, tickinterval=1)
 
-        self.all_harmonic = tk.Radiobutton(
-            self.frame_harmonics, text="Tout afficher",
-            value=3,
-            variable=self.harmonic_type_var
-        )
-        
-        # right controls
-        
-        
-        
-        self.model_var = tk.IntVar()
-        self.model_var.set(10)
-        self.signal_x = tk.Radiobutton(
-            self.frame_harmonics, text="modèle X",
-            value=10,
-            variable=self.model_var
-        )
-        self.signal_y = tk.Radiobutton(
-            self.frame_harmonics, text="modèle Y",
-            value=20,
-            variable=self.model_var
-        )
-        self.signal_xy = tk.Radiobutton(
-            self.frame_harmonics, text="modèle X-Y",
-            value=30,
-            variable=self.model_var
-        )
-        self.signal_type = self.model_var
-        print(self.model_var)
+        # self.frame_model = tk.LabelFrame(self.frame_bottom, text="models")
+
+        # self.harmonic_type_var = tk.IntVar()
+        # self.harmonic_type_var.set(1)
+        # self.pair_harmonic = tk.Radiobutton(self.frame_harmonics, text="Pair",
+        #                                     value=1,
+        #                                     variable=self.harmonic_type_var)
+
+        # self.impair_harmonic = tk.Radiobutton(
+        #     self.frame_harmonics, text="Impair",
+        #     value=2,
+        #     variable=self.harmonic_type_var
+        # )
+
+        # self.all_harmonic = tk.Radiobutton(
+        #     self.frame_harmonics, text="Tout afficher",
+        #     value=3,
+        #     variable=self.harmonic_type_var
+        # )
+
+        # # right controls
+
+        # self.model_var = tk.IntVar()
+        # self.model_var.set(10)
+        # self.signal_x = tk.Radiobutton(
+        #     self.frame_harmonics, text="modèle X",
+        #     value=10,
+        #     variable=self.model_var
+        # )
+        # self.signal_y = tk.Radiobutton(
+        #     self.frame_harmonics, text="modèle Y",
+        #     value=20,
+        #     variable=self.model_var
+        # )
+        # self.signal_xy = tk.Radiobutton(
+        #     self.frame_harmonics, text="modèle X-Y",
+        #     value=30,
+        #     variable=self.model_var
+        # )
+        # self.signal_type = self.model_var
+        # print(self.model_var)
 
     def new_file(self):
         pass
 
-    def update(self, subject):
+    def update(self, subject, isanimate=False):
         print("Generator.update()")
         print("Update signal", self.get_name())
         if subject.signal:
 
             self.plot_signal(signal=subject.signal)
+            if (isanimate):
+                self.plot_signal(subject.point, "animation", color="blue")
 
-    def plot_signal(self, name="X", signal=[], color="red"):
+    def plot_signal(self, name="X", signal=[], color="red", isanimate=False):
         print("Generator.plot_signal()")
         if signal and len(signal) > 1:
             w, h = self.width, self.height
@@ -187,9 +189,20 @@ class View(Observer):
             plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
             self.screen.create_line(
                 plots, fill=color, smooth=1, width=3, tags=name,
-                )
+            )
+        elif signal and isanimate:
+            # print("in plotsignal for animation")
+            self.screen.delete(name)
+            x = signal[0]*self.width
+            y = self.height/2*(signal[1]+1)
+            pointSize = 5
+            self.screen.create_oval(
+                x-pointSize, y-pointSize, x+pointSize, y+pointSize, fill=color, tags=name)
         return
-    
+
+    def animate_spot(self, canvas, i=0):
+        width, height = canvas.winfo_wi
+        if signal
     def plot_signal_toplevel(self, name="X", signal=[], color="red"):
         print("Generator.plot_signal()")
         if signal and len(signal) > 1:
@@ -218,7 +231,7 @@ class View(Observer):
             self.screen.create_line(0, y, self.width, y, tags="grid")
             self.screen.create_line(
                 self.width/2-10, y, self.width/2+10, y, width=3, tags="grid")
-    
+
     def create_grid_toplevel(self, tiles=2):
         print("Generator.create_grid()")
         if self.screen_toplevel.find_withtag("grid"):
@@ -252,26 +265,24 @@ class View(Observer):
         # self.title.grid(row=0, column=0, sticky="ew", padx=10)
         # self.clock.grid(row=0, column=1, sticky="ew")
         # self.divider.grid(row=0, column=2, sticky="ew")
-        
+
         # self.divider2.grid(row=0, column=6, sticky="ew")
 
-        self.screen.pack(expand=True, fill="both", padx=10, pady=20)
-        self.frame.pack(expand=True, fill="both", padx=5, pady=5)
-        self.frame_right.grid(row=0, column=1)
-        
-        
-        self.frame_left.grid(row=0, column=0)
-        self.scaleA.grid(row=0, column=0)
-        self.scaleF.grid(row=1, column=0)
-        self.scaleP.grid(row=2, column=0)
-        self.scaleHarmic.grid(row=3, column=0)
-        self.scale_sample.grid(row=4, column=0)
-        self.frame_bottom.grid(row=0, column=1)
-        self.frame_harmonics.pack(expand=True, fill="both", padx=10, pady=20)
-        self.pair_harmonic.grid(row=0, column=0, sticky="ew")
-        self.impair_harmonic.grid(row=0, column=1, sticky="ew")
-        self.all_harmonic.grid(row=0, column=2)
-        
+        # self.frame.pack(expand=True, fill="both", padx=5, pady=5)
+        # self.frame_right.grid(row=0, column=1)
+
+        # self.frame_left.grid(row=0, column=0)
+        # self.scaleA.grid(row=0, column=0)
+        # self.scaleF.grid(row=1, column=0)
+        # self.scaleP.grid(row=2, column=0)
+        # self.scaleHarmic.grid(row=3, column=0)
+        # self.scale_sample.grid(row=4, column=0)
+        # self.frame_bottom.grid(row=0, column=1)
+        # self.frame_harmonics.pack(expand=True, fill="both", padx=10, pady=20)
+        # self.pair_harmonic.grid(row=0, column=0, sticky="ew")
+        # self.impair_harmonic.grid(row=0, column=1, sticky="ew")
+        # self.all_harmonic.grid(row=0, column=2)
+
         # self.frame_model.pack(expand=True, fill="both", padx=10, pady=20)
         # self.signal_x.grid(row=0, column=7, sticky="ew")
         # self.signal_y.grid(row=0, column=8, sticky="ew")
