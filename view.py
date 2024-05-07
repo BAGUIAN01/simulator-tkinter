@@ -32,17 +32,26 @@ class View(Observer):
         self.signal_type = 10
         self.signal_x = []
         self.signal_y = []
+        self.radius = 10
+        self.x = 0
+        self.y = 0
 
         self.gui()
 
+
         self.controls = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
-        self.controls.pack(side=tk.TOP, expand=tk.Y,
-                           fill=tk.BOTH, pady=2, padx=2)
+        self.controls.pack(expand=True, fill='both')
+
+        self.spot = self.screen.create_oval(
+            self.x-self.radius, self.y-self.radius,
+            self.x+self.radius, self.y+self.radius,
+            fill="red", outline="black", tags="spot"
+
+        )
+        self.width_canvas = int(self.screen.cget("width"))
+        self.height_canvas = int(self.screen.cget("height"))
 
     def create(self):
-        print(self.signal_x)
-        print("et")
-        print(self.signal_y)
         self.win = tk.Toplevel(self.parent)
         self.screen_toplevel = tk.Canvas(self.win, bg=self.bg,
                                          width=self.width, height=self.height)
@@ -60,92 +69,21 @@ class View(Observer):
 
     def gui(self):
         print("Generator.gui()")
-        self.menubar = tk.Menu(self.parent)
-        self.parent.config(menu=self.menubar)
+        # self.menubar = tk.Menu(self.parent)
+        # self.parent.config(menu=self.menubar)
 
-        self.file_menu = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="File", menu=self.file_menu)
+        # self.file_menu = tk.Menu(self.menubar, tearoff=0)
+        # self.menubar.add_cascade(label="File", menu=self.file_menu)
 
-        self.edit_menu = tk.Menu(self.menubar, tearoff=0)
-        self.menubar.add_cascade(label="Edit", menu=self.edit_menu)
-
-        # self.header = tk.LabelFrame(self.parent)
-        # self.header.configure(relief="flat")
+        # self.edit_menu = tk.Menu(self.menubar, tearoff=0)
+        # self.menubar.add_cascade(label="Edit", menu=self.edit_menu)
 
         self.screen = tk.Canvas(self.parent, bg=self.bg,
                                 width=self.width, height=self.height)
         self.screen.configure(relief="flat")
         self.screen.pack(expand=True, fill="both", padx=10, pady=20)
 
-        # self.frame = tk.LabelFrame(self.parent, text="")
-        # self.frame.configure(border=2)
-        # self.frame_left = tk.LabelFrame(self.frame, text="X")
-        # self.frame_left.configure(border=2)
-
-        # self.frame_right = tk.LabelFrame(self.frame, text="Y")
-        # self.frame_right.configure(border=2)
-        # self.frame_bottom = tk.LabelFrame(self.frame_left, text="")
-        # self.frame_bottom.configure(border=2)
-        # self.frame_harmonics = tk.LabelFrame(self.frame_bottom, text="Harmonics")
-        # self.frame_harmonics.configure(border=2)
-
-        # #left contzrols
-        # self.var_mag = tk.IntVar()
-        # self.var_mag.set(1)
-        # self.scaleA = tk.Scale(self.frame_left, variable=self.var_mag,
-        #                        label="Amplitude",
-        #                        orient="horizontal", length=250,
-        #                        from_=0, to=5, tickinterval=1,
-        #                        )
-
-        # self.var_freq = tk.IntVar()
-        # self.var_freq.set(1)
-        # self.scaleF = tk.Scale(self.frame_left, variable=self.var_freq,
-        #                        label="frequence",
-        #                        orient="horizontal", length=250,
-        #                        from_=0, to=5, tickinterval=1)
-
-        # self.var_p = tk.IntVar()
-        # self.var_p.set(1)
-        # self.scaleP = tk.Scale(self.frame_left, variable=self.var_p,
-        #                        label="Phase",
-        #                        orient="horizontal", length=250,
-        #                        from_=-50, to=50, tickinterval=1)
-
-        # self.n_sample = tk.IntVar()
-        # self.n_sample.set(100)
-        # self.scale_sample = tk.Scale(self.frame_left, variable=self.n_sample,
-        #                              label="Echantillon",
-        #                              orient="horizontal", length=250,
-        #                              from_=100, to=200, tickinterval=1)
-
-        # self.var_harmonic = tk.IntVar()
-        # self.var_harmonic.set(1)
-        # self.scaleHarmic = tk.Scale(self.frame_left, variable=self.var_harmonic,
-        #                             label="Harmonic",
-        #                             orient="horizontal", length=250,
-        #                             from_=0, to=5, tickinterval=1)
-
-        # self.frame_model = tk.LabelFrame(self.frame_bottom, text="models")
-
-        # self.harmonic_type_var = tk.IntVar()
-        # self.harmonic_type_var.set(1)
-        # self.pair_harmonic = tk.Radiobutton(self.frame_harmonics, text="Pair",
-        #                                     value=1,
-        #                                     variable=self.harmonic_type_var)
-
-        # self.impair_harmonic = tk.Radiobutton(
-        #     self.frame_harmonics, text="Impair",
-        #     value=2,
-        #     variable=self.harmonic_type_var
-        # )
-
-        # self.all_harmonic = tk.Radiobutton(
-        #     self.frame_harmonics, text="Tout afficher",
-        #     value=3,
-        #     variable=self.harmonic_type_var
-        # )
-
+       
         # # right controls
 
         # self.model_var = tk.IntVar()
@@ -200,9 +138,18 @@ class View(Observer):
                 x-pointSize, y-pointSize, x+pointSize, y+pointSize, fill=color, tags=name)
         return
 
-    def animate_spot(self, canvas, i=0):
-        width, height = canvas.winfo_wi
-        if signal
+    def animate_spot(self, canvas, signal, i=0):
+        width, height = canvas.winfo_width(), canvas.winfo_height()
+        m_sec = 20
+        if i == len(signal):
+            i = 0
+
+        x, y = signal[i][0]*width, height/3*(signal[i][1]+1)
+        canvas.coords(self.spot, x, y, x+self.radius, y+self.radius)
+        after_id = self.screen.after(
+            m_sec, self.animate_spot, canvas, signal, i+1)
+        return after_id
+
     def plot_signal_toplevel(self, name="X", signal=[], color="red"):
         print("Generator.plot_signal()")
         if signal and len(signal) > 1:

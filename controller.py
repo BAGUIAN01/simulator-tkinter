@@ -29,10 +29,7 @@ else:
 class Controller:
     signal_type = 20
 
-    def __init__(self, model, model_y, view, mode):
-        self.mode = mode
-        self.model_y = model_y
-        self.model_x = model
+    def __init__(self, model, view):
         self.model = model
         self.model.generate()
         self.view = view
@@ -56,7 +53,7 @@ class Controller:
         self.frame = tk.LabelFrame(self.view.parent, text=self.model.name)
         self.view.controls.add(self.frame)
         self.var_mag = tk.IntVar()
-        self.var_mag.set(2)
+        self.var_mag.set(1)
         self.scaleA = tk.Scale(self.frame, variable=self.var_mag,
                                label="Amplitude",
                                orient="horizontal", length=250,
@@ -113,7 +110,7 @@ class Controller:
         self.move = tk.Button(self.frame_harmonics, text="Move")
 
         # packing
-        self.frame.pack()
+        self.frame.pack(fill="both", expand=True, side=tk.LEFT)
         self.scaleA.grid(row=0, column=0)
         self.scaleF.grid(row=1, column=0)
         self.scaleP.grid(row=2, column=0)
@@ -144,26 +141,8 @@ class Controller:
         #     "<Button-1>", self.on_signal_y_action)
         # self.view.signal_xy.bind(
         #     "<Button-1>", self.on_signal_xy_action)
-        self.view.file_menu.add_command(label="Open",
-                                        command=self.open_file)
-
-        self.view.file_menu.add_command(label="Save",
-                                        command=self.save_file)
-        self.view.file_menu.add_separator()
-        self.view.file_menu.add_command(label="Save Png",
-                                        command=self.save_png)
-        self.view.file_menu.add_command(label="Save jpg",
-                                        command=self.save_jpg)
-        self.view.file_menu.add_separator()
-        self.view.file_menu.add_command(label="Exit",
-                                        command=self.exit)
-
-        self.view.edit_menu.add_command(label="About Us",
-                                        command=self.about_us)
-        self.view.edit_menu.add_command(label="About Tk",
-                                        command=self.about_tk)
-        self.view.edit_menu.add_command(label="About Python ",
-                                        command=self.about_python)
+        
+        self.move.bind("<Button-1>", self.cb_move)
 
     def on_magnitude_action(self, event):
 
@@ -278,7 +257,7 @@ class Controller:
         )
         if result_askquestion == "yes":
             print("See you soon!")
-            self.close_app()
+            self.view.parent.destroy()
         else:
             print("Exit cancelled.")
 
@@ -366,6 +345,9 @@ class Controller:
     def save_jpg(self):
         pass
 
+    def cb_move(self, event):
+        self.model.generate()
+        self.view.animate_spot(self.view.screen, self.model.signal)
 
 if __name__ == "__main__":
     root = tk.Tk()
