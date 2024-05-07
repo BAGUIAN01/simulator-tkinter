@@ -140,9 +140,9 @@ def close_message_box():
 
 def exit():
     sure = tk.messagebox.askyesno("Exit", "Are you sure you want to exit?",
-                                  parent=view.parent)
+                                  parent=root)
     if sure == True:
-        view.parent.destroy()
+        root.destroy()
 
 
 def about_us():
@@ -171,7 +171,9 @@ def about_python():
 
 
 if __name__ == "__main__":
+    
     root = tk.Tk()
+    # root.protocol("WM_DELETE_WINDOW",exit())
     root.configure(background="black")
     root.title("Simulateur")
     # root.option_readfile("oscillo.opt")

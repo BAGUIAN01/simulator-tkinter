@@ -33,25 +33,34 @@ class View(Observer):
         self.signal_x = []
         self.signal_y = []
         self.signals = {}
+        self.colors = {
+            "X":"red",
+            "Y":"blue"
+        }
         self.radius = 10
         self.x = 0
         self.y = 0
-
+        self.parent.protocol("WM_DELETE_WINDOW", self.exit)
         self.gui()
-
 
         self.controls = tk.PanedWindow(self.parent, orient=tk.HORIZONTAL)
         self.controls.pack(expand=True, fill='both')
-
+        self.colors_control = "X"
         self.spot = self.screen.create_oval(
             self.x-self.radius, self.y-self.radius,
             self.x+self.radius, self.y+self.radius,
-            fill="red", outline="black", tags="spot"
+            fill=self.colors[self.colors_control], outline="black", tags="spot"
 
         )
         self.width_canvas = int(self.screen.cget("width"))
         self.height_canvas = int(self.screen.cget("height"))
+        
 
+    def exit(self):
+        sure = tk.messagebox.askokcancel("Quit", "Are you sure you want to exit?",
+                                  parent=self.parent)
+        if sure == True:
+            self.parent.destroy()
     def create(self):
         self.win = tk.Toplevel(self.parent)
         self.screen_toplevel = tk.Canvas(self.win, bg=self.bg,
@@ -84,7 +93,6 @@ class View(Observer):
         self.screen.configure(relief="flat")
         self.screen.pack(expand=True, fill="both", padx=10, pady=20)
 
-       
         # # right controls
 
         # self.model_var = tk.IntVar()
@@ -114,30 +122,30 @@ class View(Observer):
         print("Generator.update()")
         print("Update signal", self.get_name())
         if subject.signal:
+            signals_list = []
+            for key, value in self.signals.items():
+                signals_list.append(value)
+            
+            
+            self.plot_signal(signal=subject.signal, color="yellow")
+            # if len(signals_list)>1:
+            #    self.plot_signal(signal=signals_list[0],name="Y", color="blue")
+            #    self.plot_signal(signal=signals_list[1],name="Y", color="red")
 
-            self.plot_signal(signal=subject.signal)
-            if (isanimate):
-                self.plot_signal(subject.point, "animation", color="blue")
-
-    def plot_signal(self, name="X", signal=[], color="red", isanimate=False):
+    def plot_signal(self, name="X", signal=[], color={}):
+        color = self.colors
         print("Generator.plot_signal()")
-        if signal and len(signal) > 1:
-            w, h = self.width, self.height
-            if self.screen.find_withtag(name):
-                self.screen.delete(name)
-            plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
-            self.screen.create_line(
-                plots, fill=color, smooth=1, width=3, tags=name,
-            )
-        elif signal and isanimate:
-            # print("in plotsignal for animation")
-            self.screen.delete(name)
-            x = signal[0]*self.width
-            y = self.height/2*(signal[1]+1)
-            pointSize = 5
-            self.screen.create_oval(
-                x-pointSize, y-pointSize, x+pointSize, y+pointSize, fill=color, tags=name)
-        return
+        print(len(self.signals))
+        for key, value in self.signals.items():
+            if signal and len(signal) > 1:
+                w, h = self.width, self.height
+                if self.screen.find_withtag(key):
+                    self.screen.delete(key)
+                plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in value]
+                self.screen.create_line(
+                    plots, fill=color[key], smooth=1, width=3, tags=name,
+                )
+        
 
     def animate_spot(self, canvas, signal, i=0):
         width, height = canvas.winfo_width(), canvas.winfo_height()
@@ -145,7 +153,7 @@ class View(Observer):
         if i == len(signal):
             i = 0
 
-        x, y = signal[i][0]*width, height/3*(signal[i][1]+1)
+        x, y = signal[i][0]*width, height/self.units*(signal[i][1])+height/2
         canvas.coords(self.spot, x, y, x+self.radius, y+self.radius)
         after_id = self.screen.after(
             m_sec, self.animate_spot, canvas, signal, i+1)

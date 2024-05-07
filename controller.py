@@ -34,23 +34,13 @@ class Controller:
         self.view = view
         self.model.generate()
         self.view.signals[self.model.name] = self.model.signal
-        print(len(self.view.signals))
-        
+        print(self.view.signals)
+
         self.name = "control"
         self.controls()
         self.actions_binding()
-        # self.timer = TkTimer(self.view.parent, 50, False, self.animate)
-        # self.animation_active = True
-        # self.stop_animation = False
-        # self.animate()
 
-    def animate(self):
-        if (self.model.point[0] >= 1):  # if the spot is out of the screen
-            self.model.index_animation = 0  # restart
-        print(f"les points {self.model.point}")
-        self.view.update(self.model, isanimate=True)
-
-        self.model.index_animation += 1
+   
 
     def controls(self):
         self.frame = tk.LabelFrame(self.view.parent, text=self.model.name)
@@ -144,7 +134,7 @@ class Controller:
         #     "<Button-1>", self.on_signal_y_action)
         # self.view.signal_xy.bind(
         #     "<Button-1>", self.on_signal_xy_action)
-        
+
         self.move.bind("<Button-1>", self.cb_move)
 
     def on_magnitude_action(self, event):
@@ -351,6 +341,8 @@ class Controller:
     def cb_move(self, event):
         self.model.generate()
         self.view.animate_spot(self.view.screen, self.model.signal)
+        self.view.colors_control = self.model.name
+
 
 if __name__ == "__main__":
     root = tk.Tk()
