@@ -30,10 +30,26 @@ class View(Observer):
         self.width, self.height = width, height
         self.name = "Controls"
         self.signal_type = 10
+        self.signal_x = []
+        self.signal_y = []
 
 
         self.gui()
 
+    def create(self):
+        print(self.signal_x)
+        print("et")
+        print(self.signal_y)
+        self.win = tk.Toplevel(self.parent)
+        self.screen_toplevel = tk.Canvas(self.win, bg=self.bg,
+                                width=self.width, height=self.height)
+        self.screen_toplevel.configure(relief="flat")
+        self.screen_toplevel.pack(expand=True, fill="both", padx=10, pady=20)
+        self.create_grid_toplevel(8)
+        self.plot_signal_toplevel(signal=self.signal_x, color="blue")
+        self.plot_signal_toplevel(signal=self.signal_y, color="red")
+        
+        
     def get_name(self):
         return self.name
 
@@ -130,17 +146,17 @@ class View(Observer):
         self.model_var = tk.IntVar()
         self.model_var.set(10)
         self.signal_x = tk.Radiobutton(
-            self.frame_model, text="X",
+            self.header, text="modèle X",
             value=10,
             variable=self.model_var
         )
         self.signal_y = tk.Radiobutton(
-            self.frame_model, text="Y",
+            self.header, text="modèle Y",
             value=20,
             variable=self.model_var
         )
         self.signal_xy = tk.Radiobutton(
-            self.frame_model, text="X-Y",
+            self.header, text="modèle X-Y",
             value=30,
             variable=self.model_var
         )
@@ -165,6 +181,18 @@ class View(Observer):
                 self.screen.delete(name)
             plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
             self.screen.create_line(
+                plots, fill=color, smooth=1, width=3, tags=name,
+                )
+        return
+    
+    def plot_signal_toplevel(self, name="X", signal=[], color="red"):
+        print("Generator.plot_signal()")
+        if signal and len(signal) > 1:
+            w, h = self.width, self.height
+            if self.screen_toplevel.find_withtag(name):
+                self.screen_toplevel.delete(name)
+            plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
+            self.screen_toplevel.create_line(
                 plots, fill=color, smooth=1, width=3, tags=name)
         return
 
@@ -184,6 +212,24 @@ class View(Observer):
             y = t*tile_y
             self.screen.create_line(0, y, self.width, y, tags="grid")
             self.screen.create_line(
+                self.width/2-10, y, self.width/2+10, y, width=3, tags="grid")
+    
+    def create_grid_toplevel(self, tiles=2):
+        print("Generator.create_grid()")
+        if self.screen_toplevel.find_withtag("grid"):
+            self.screen_toplevel.delete("grid")
+        self.units = tiles
+        tile_x = self.width/tiles
+        for t in range(1, tiles+1):
+            x = t*tile_x
+            self.screen_toplevel.create_line(x, 0, x, self.height, tags="grid")
+            self.screen_toplevel.create_line(
+                x, self.height/2-10, x, self.height/2+10, width=3, tags="grid")
+        tile_y = self.height/tiles
+        for t in range(1, tiles+1):
+            y = t*tile_y
+            self.screen_toplevel.create_line(0, y, self.width, y, tags="grid")
+            self.screen_toplevel.create_line(
                 self.width/2-10, y, self.width/2+10, y, width=3, tags="grid")
 
     def resize(self, event):
@@ -214,9 +260,9 @@ class View(Observer):
         self.scaleHarmic.grid(row=0, column=4)
         self.scale_sample.grid(row=0, column=5)
         self.frame_model.pack(expand=True, fill="both", padx=10, pady=20)
-        self.signal_x.grid(row=0, column=1, sticky="ew")
-        self.signal_y.grid(row=0, column=2, sticky="ew")
-        self.signal_xy.grid(row=0, column=3, sticky="ew")
+        self.signal_x.grid(row=0, column=7, sticky="ew")
+        self.signal_y.grid(row=0, column=8, sticky="ew")
+        self.signal_xy.grid(row=0, column=9, sticky="ew")
         # self.scaleHarmic.pack()
 
 

@@ -5,6 +5,10 @@ from math import pi, sin, radians
 import sys
 import math
 import json
+from PIL import Image,  ImageGrab
+import io
+
+
 major = sys.version_info.major
 minor = sys.version_info.minor
 if major == 2 and minor == 7:
@@ -23,6 +27,7 @@ else:
 
 class Controller:
     signal_type = 20
+
     def __init__(self, model, model_y, view, mode):
         self.mode = mode
         self.model_y = model_y
@@ -57,6 +62,11 @@ class Controller:
 
         self.view.file_menu.add_command(label="Save",
                                         command=self.save_file)
+        self.view.file_menu.add_separator()
+        self.view.file_menu.add_command(label="Save Png",
+                                        command=self.save_png)
+        self.view.file_menu.add_command(label="Save jpg",
+                                        command=self.save_jpg)
         self.view.file_menu.add_separator()
         self.view.file_menu.add_command(label="Exit",
                                         command=self.exit)
@@ -210,7 +220,7 @@ class Controller:
         print("about_py %s" % "Informations Python")
         tk.messagebox.showinfo(
             title="About py",
-            message="Développé avec :\n\nVisual Studio Code v1.75.1\nPython v3.10.4\n",
+            message="Développé avec vs code",
         )
 
     def on_signal_x_action(self, event):
@@ -222,14 +232,17 @@ class Controller:
         print(self.view.model_var.get())
         self.signal_type = self.view.model_var.get()
         self.set_model()
-        
-        
 
     def on_signal_xy_action(self, event):
         print(self.view.model_var.get())
-        self.signal_type = self.view.model_var.get()
+        self.model_x.generate()
+        self.model_y.generate()
         self.set_model()
-    
+        self.view.signal_x = self.model_x.signal
+        self.view.signal_y = self.model_y.signal
+        
+        self.view.create()
+
     def set_model(self):
         if self.signal_type == 10:
             self.model = self.model_x
@@ -237,10 +250,34 @@ class Controller:
         elif self.signal_type == 20:
             self.model = self.model_y
             self.model.generate()
-        elif self.signal_type==30:
-            pass
+        elif self.signal_type == 30:
+            self.model_x.generate()
+            self.model_y.generate()
 
-        
+    def save_png(self):
+        formats = [("*.png", "*.jpg")]
+        self.filename = filedialog.asksaveasfilename(
+            parent=self.view.parent, filetypes=formats, title="Saving..."
+        )
+        if not self.filename.endswith(".png") and not self.filename.endswith(".jpg"):
+            self.filename += ".png"
+        x = self.view.parent.winfo_rootx() + self.view.screen.winfo_x()
+        y = self.view.parent.winfo_rooty() + self.view.screen.winfo_y()
+
+        bbox = self.view.screen.bbox("all")
+        x1, y1, x2, y2 = bbox
+
+        width = x2 - x1
+        height = y2 - y1
+
+        x_left = x + x1
+        y_top = y + y1
+        x_right = x + x2
+        y_bottom = y + y2
+        ImageGrab.grab().crop((x_left, y_top, x_right, y_bottom)).save(self.filename)
+
+    def save_jpg(self):
+        pass
 
 
 if __name__ == "__main__":
