@@ -31,8 +31,11 @@ class Controller:
 
     def __init__(self, model, view):
         self.model = model
-        self.model.generate()
         self.view = view
+        self.model.generate()
+        self.view.signals[self.model.name] = self.model.signal
+        print(len(self.view.signals))
+        
         self.name = "control"
         self.controls()
         self.actions_binding()

@@ -20,14 +20,14 @@ else:
 
 
 class Generator(Subject):
-    def __init__(self):
+    def __init__(self, name="X"):
         Subject.__init__(self)
         self.signal = []
         self.m, self.f, self.p = 1.0, 2.0, 0.0
         self.harmonics = 1
         self.samples = 100
         self.units = 1
-        self.name = "model"
+        self.name = name
         self.pair = True
         self.impair = True
         

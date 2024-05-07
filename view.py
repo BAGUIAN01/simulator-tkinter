@@ -32,6 +32,7 @@ class View(Observer):
         self.signal_type = 10
         self.signal_x = []
         self.signal_y = []
+        self.signals = {}
         self.radius = 10
         self.x = 0
         self.y = 0

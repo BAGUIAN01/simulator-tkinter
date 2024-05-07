@@ -179,14 +179,17 @@ if __name__ == "__main__":
     view = View(root)
 
     model_x = Generator()
-    model_y = Generator()
+    model_y = Generator(name="Y")
     view.create_grid(8)
     # view.layout()
 
     model_x.attach(view)
     model_x.generate()
+    view.signals[model_x.name] = model_x.signal
     model_y.attach(view)
     model_y.generate()
+    view.signals[model_y.name] = model_y.signal
+    
 
     control_x = Controller(model=model_x, view=view)
     menubar(view, model_x)
