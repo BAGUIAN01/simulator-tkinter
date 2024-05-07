@@ -128,15 +128,14 @@ class Controller:
             "<Button-1>", self.on_impairharmonic_action)
         self.all_harmonic.bind(
             "<Button-1>", self.on_allharmonic_action)
-        # self.view.signal_x.bind(
-        #     "<Button-1>", self.on_signal_x_action)
-        # self.view.signal_y.bind(
-        #     "<Button-1>", self.on_signal_y_action)
-        # self.view.signal_xy.bind(
-        #     "<Button-1>", self.on_signal_xy_action)
+        
 
         self.move.bind("<Button-1>", self.cb_move)
+        self.view.mode_xy.bind("<Button-1>", self.go_to_toplevel)
 
+    def go_to_toplevel(self,event):
+        self.view.create()
+        
     def on_magnitude_action(self, event):
 
         if self.model.m != self.var_mag.get():

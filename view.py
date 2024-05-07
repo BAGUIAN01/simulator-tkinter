@@ -3,6 +3,7 @@ from generator import Generator
 from observer import Observer
 from math import pi, sin, radians
 import sys
+import numpy as np
 import math
 import logging
 from time import strftime
@@ -34,8 +35,8 @@ class View(Observer):
         self.signal_y = []
         self.signals = {}
         self.colors = {
-            "X":"red",
-            "Y":"blue"
+            "X": "red",
+            "Y": "blue"
         }
         self.radius = 10
         self.x = 0
@@ -54,13 +55,13 @@ class View(Observer):
         )
         self.width_canvas = int(self.screen.cget("width"))
         self.height_canvas = int(self.screen.cget("height"))
-        
 
     def exit(self):
         sure = tk.messagebox.askokcancel("Quit", "Are you sure you want to exit?",
-                                  parent=self.parent)
+                                         parent=self.parent)
         if sure == True:
             self.parent.destroy()
+
     def create(self):
         self.win = tk.Toplevel(self.parent)
         self.screen_toplevel = tk.Canvas(self.win, bg=self.bg,
@@ -68,8 +69,14 @@ class View(Observer):
         self.screen_toplevel.configure(relief="flat")
         self.screen_toplevel.pack(expand=True, fill="both", padx=10, pady=20)
         self.create_grid_toplevel(8)
-        self.plot_signal_toplevel(signal=self.signal_x, color="blue")
-        self.plot_signal_toplevel(signal=self.signal_y, color="red")
+        x_values = [point[1] for point in self.signals['X']]
+        y_values = [point[1] for point in self.signals['Y']]
+        xy = [[x_values[i], y_values[i]] for i in np.arange(len(x_values))]
+        print(xy)
+        # x= 
+        self.plot_signal_toplevel(
+            signal=[x_values, y_values], color="blue")
+
 
     def get_name(self):
         return self.name
@@ -79,58 +86,25 @@ class View(Observer):
 
     def gui(self):
         print("Generator.gui()")
-        # self.menubar = tk.Menu(self.parent)
-        # self.parent.config(menu=self.menubar)
-
-        # self.file_menu = tk.Menu(self.menubar, tearoff=0)
-        # self.menubar.add_cascade(label="File", menu=self.file_menu)
-
-        # self.edit_menu = tk.Menu(self.menubar, tearoff=0)
-        # self.menubar.add_cascade(label="Edit", menu=self.edit_menu)
-
+        self.mode_xy = tk.Button(self.parent, text="X-Y")
+        self.mode_xy.pack()
         self.screen = tk.Canvas(self.parent, bg=self.bg,
                                 width=self.width, height=self.height)
         self.screen.configure(relief="flat")
+
         self.screen.pack(expand=True, fill="both", padx=10, pady=20)
-
-        # # right controls
-
-        # self.model_var = tk.IntVar()
-        # self.model_var.set(10)
-        # self.signal_x = tk.Radiobutton(
-        #     self.frame_harmonics, text="modèle X",
-        #     value=10,
-        #     variable=self.model_var
-        # )
-        # self.signal_y = tk.Radiobutton(
-        #     self.frame_harmonics, text="modèle Y",
-        #     value=20,
-        #     variable=self.model_var
-        # )
-        # self.signal_xy = tk.Radiobutton(
-        #     self.frame_harmonics, text="modèle X-Y",
-        #     value=30,
-        #     variable=self.model_var
-        # )
-        # self.signal_type = self.model_var
-        # print(self.model_var)
 
     def new_file(self):
         pass
 
     def update(self, subject, isanimate=False):
-        print("Generator.update()")
-        print("Update signal", self.get_name())
         if subject.signal:
             signals_list = []
             for key, value in self.signals.items():
                 signals_list.append(value)
-            
-            
+
             self.plot_signal(signal=subject.signal, color="yellow")
-            # if len(signals_list)>1:
-            #    self.plot_signal(signal=signals_list[0],name="Y", color="blue")
-            #    self.plot_signal(signal=signals_list[1],name="Y", color="red")
+            
 
     def plot_signal(self, name="X", signal=[], color={}):
         color = self.colors
@@ -145,7 +119,6 @@ class View(Observer):
                 self.screen.create_line(
                     plots, fill=color[key], smooth=1, width=3, tags=name,
                 )
-        
 
     def animate_spot(self, canvas, signal, i=0):
         width, height = canvas.winfo_width(), canvas.winfo_height()
@@ -165,7 +138,7 @@ class View(Observer):
             w, h = self.width, self.height
             if self.screen_toplevel.find_withtag(name):
                 self.screen_toplevel.delete(name)
-            plots = [(x*w, (h/self.units)*y+h/2) for (x, y) in signal]
+            plots = [(x*w, (h/self.units)*y+h/2) for x, y in signal]
             self.screen_toplevel.create_line(
                 plots, fill=color, smooth=1, width=3, tags=name)
         return
@@ -216,34 +189,6 @@ class View(Observer):
 
     def layout(self):
         print("Generator.layout()")
-        # self.header.pack(expand=True, fill="both", padx=10, pady=20)
-
-        # self.title.grid(row=0, column=0, sticky="ew", padx=10)
-        # self.clock.grid(row=0, column=1, sticky="ew")
-        # self.divider.grid(row=0, column=2, sticky="ew")
-
-        # self.divider2.grid(row=0, column=6, sticky="ew")
-
-        # self.frame.pack(expand=True, fill="both", padx=5, pady=5)
-        # self.frame_right.grid(row=0, column=1)
-
-        # self.frame_left.grid(row=0, column=0)
-        # self.scaleA.grid(row=0, column=0)
-        # self.scaleF.grid(row=1, column=0)
-        # self.scaleP.grid(row=2, column=0)
-        # self.scaleHarmic.grid(row=3, column=0)
-        # self.scale_sample.grid(row=4, column=0)
-        # self.frame_bottom.grid(row=0, column=1)
-        # self.frame_harmonics.pack(expand=True, fill="both", padx=10, pady=20)
-        # self.pair_harmonic.grid(row=0, column=0, sticky="ew")
-        # self.impair_harmonic.grid(row=0, column=1, sticky="ew")
-        # self.all_harmonic.grid(row=0, column=2)
-
-        # self.frame_model.pack(expand=True, fill="both", padx=10, pady=20)
-        # self.signal_x.grid(row=0, column=7, sticky="ew")
-        # self.signal_y.grid(row=0, column=8, sticky="ew")
-        # self.signal_xy.grid(row=0, column=9, sticky="ew")
-        # self.scaleHarmic.pack()
 
 
 if __name__ == "__main__":

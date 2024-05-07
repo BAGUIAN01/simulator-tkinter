@@ -171,7 +171,7 @@ def about_python():
 
 
 if __name__ == "__main__":
-    
+
     root = tk.Tk()
     # root.protocol("WM_DELETE_WINDOW",exit())
     root.configure(background="black")
@@ -191,7 +191,6 @@ if __name__ == "__main__":
     model_y.attach(view)
     model_y.generate()
     view.signals[model_y.name] = model_y.signal
-    
 
     control_x = Controller(model=model_x, view=view)
     menubar(view, model_x)
