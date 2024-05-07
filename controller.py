@@ -32,7 +32,7 @@ class Controller:
         self.mode = mode
         self.model_y = model_y
         self.model_x = model
-        self.model = None
+        self.model = model
         self.view = view
         self.name = "control"
         self.actions_binding()

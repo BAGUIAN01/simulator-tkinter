@@ -67,25 +67,29 @@ class View(Observer):
         self.edit_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Edit", menu=self.edit_menu)
 
-        self.header = tk.LabelFrame(self.parent)
-        self.header.configure(relief="flat")
-        self.title = tk.Label(self.header, text="Simulateur")
-        self.title.configure(font="-family {Poppins} -size 20")
-        self.title.configure(foreground="#000000")
-        self.title.configure(anchor="w")
-        self.clock = tk.Label(self.header)
-        string = strftime("%H:%M:%S %p")
-        self.clock.config(text=string)
+        # self.header = tk.LabelFrame(self.parent)
+        # self.header.configure(relief="flat")
+        
         self.screen = tk.Canvas(self.parent, bg=self.bg,
                                 width=self.width, height=self.height)
         self.screen.configure(relief="flat")
 
-        self.frame = tk.LabelFrame(self.parent, text=self.name)
+        self.frame = tk.LabelFrame(self.parent, text="")
         self.frame.configure(border=2)
+        self.frame_left = tk.LabelFrame(self.frame, text="X")
+        self.frame_left.configure(border=2)
+        
+        self.frame_right = tk.LabelFrame(self.frame, text="Y")
+        self.frame_right.configure(border=2)
+        self.frame_bottom = tk.LabelFrame(self.frame_left, text="")
+        self.frame_bottom.configure(border=2)
+        self.frame_harmonics = tk.LabelFrame(self.frame_bottom, text="Harmonics")
+        self.frame_harmonics.configure(border=2)
+        
+        #left contzrols
         self.var_mag = tk.IntVar()
         self.var_mag.set(1)
-
-        self.scaleA = tk.Scale(self.frame, variable=self.var_mag,
+        self.scaleA = tk.Scale(self.frame_left, variable=self.var_mag,
                                label="Amplitude",
                                orient="horizontal", length=250,
                                from_=0, to=5, tickinterval=1,
@@ -93,70 +97,71 @@ class View(Observer):
 
         self.var_freq = tk.IntVar()
         self.var_freq.set(1)
-        self.scaleF = tk.Scale(self.frame, variable=self.var_freq,
+        self.scaleF = tk.Scale(self.frame_left, variable=self.var_freq,
                                label="frequence",
                                orient="horizontal", length=250,
                                from_=0, to=5, tickinterval=1)
 
         self.var_p = tk.IntVar()
         self.var_p.set(1)
-        self.scaleP = tk.Scale(self.frame, variable=self.var_p,
+        self.scaleP = tk.Scale(self.frame_left, variable=self.var_p,
                                label="Phase",
                                orient="horizontal", length=250,
                                from_=-50, to=50, tickinterval=1)
 
         self.n_sample = tk.IntVar()
         self.n_sample.set(100)
-        self.scale_sample = tk.Scale(self.frame, variable=self.n_sample,
+        self.scale_sample = tk.Scale(self.frame_left, variable=self.n_sample,
                                      label="Echantillon",
                                      orient="horizontal", length=250,
                                      from_=100, to=200, tickinterval=1)
 
         self.var_harmonic = tk.IntVar()
         self.var_harmonic.set(1)
-        self.scaleHarmic = tk.Scale(self.frame, variable=self.var_harmonic,
+        self.scaleHarmic = tk.Scale(self.frame_left, variable=self.var_harmonic,
                                     label="Harmonic",
                                     orient="horizontal", length=250,
                                     from_=0, to=5, tickinterval=1)
 
-        self.frame_model = tk.LabelFrame(self.parent, text="models")
-        self.divider = tk.Label(self.header, text="|")
-        self.divider2 = tk.Label(self.header, text="|")
-        self.divider3 = tk.Label(self.header, text="|")
-        self.divider4 = tk.Label(self.header, text="|")
+        self.frame_model = tk.LabelFrame(self.frame_bottom, text="models")
+
         
         self.harmonic_type_var = tk.IntVar()
         self.harmonic_type_var.set(1)
-        self.pair_harmonic = tk.Radiobutton(self.header, text="Pair",
+        self.pair_harmonic = tk.Radiobutton(self.frame_harmonics, text="Pair",
                                             value=1,
                                             variable=self.harmonic_type_var)
     
         self.impair_harmonic = tk.Radiobutton(
-            self.header, text="Impair",
+            self.frame_harmonics, text="Impair",
             value=2,
             variable=self.harmonic_type_var
         )
 
         self.all_harmonic = tk.Radiobutton(
-            self.header, text="Tout afficher",
+            self.frame_harmonics, text="Tout afficher",
             value=3,
             variable=self.harmonic_type_var
         )
         
+        # right controls
+        
+        
+        
         self.model_var = tk.IntVar()
         self.model_var.set(10)
         self.signal_x = tk.Radiobutton(
-            self.header, text="modèle X",
+            self.frame_harmonics, text="modèle X",
             value=10,
             variable=self.model_var
         )
         self.signal_y = tk.Radiobutton(
-            self.header, text="modèle Y",
+            self.frame_harmonics, text="modèle Y",
             value=20,
             variable=self.model_var
         )
         self.signal_xy = tk.Radiobutton(
-            self.header, text="modèle X-Y",
+            self.frame_harmonics, text="modèle X-Y",
             value=30,
             variable=self.model_var
         )
@@ -242,27 +247,35 @@ class View(Observer):
 
     def layout(self):
         print("Generator.layout()")
-        self.header.pack(expand=True, fill="both", padx=10, pady=20)
+        # self.header.pack(expand=True, fill="both", padx=10, pady=20)
 
-        self.title.grid(row=0, column=0, sticky="ew", padx=10)
-        self.clock.grid(row=0, column=1, sticky="ew")
-        self.divider.grid(row=0, column=2, sticky="ew")
-        self.pair_harmonic.grid(row=0, column=3, sticky="ew")
-        self.impair_harmonic.grid(row=0, column=4, sticky="ew")
-        self.all_harmonic.grid(row=0, column=5)
-        self.divider2.grid(row=0, column=6, sticky="ew")
+        # self.title.grid(row=0, column=0, sticky="ew", padx=10)
+        # self.clock.grid(row=0, column=1, sticky="ew")
+        # self.divider.grid(row=0, column=2, sticky="ew")
+        
+        # self.divider2.grid(row=0, column=6, sticky="ew")
 
         self.screen.pack(expand=True, fill="both", padx=10, pady=20)
-        self.frame.pack(expand=True, fill="both", padx=10, pady=20)
-        self.scaleA.grid(row=0, column=1, sticky="ew", padx=10, pady=5)
-        self.scaleF.grid(row=0, column=2)
-        self.scaleP.grid(row=0, column=3)
-        self.scaleHarmic.grid(row=0, column=4)
-        self.scale_sample.grid(row=0, column=5)
-        self.frame_model.pack(expand=True, fill="both", padx=10, pady=20)
-        self.signal_x.grid(row=0, column=7, sticky="ew")
-        self.signal_y.grid(row=0, column=8, sticky="ew")
-        self.signal_xy.grid(row=0, column=9, sticky="ew")
+        self.frame.pack(expand=True, fill="both", padx=5, pady=5)
+        self.frame_right.grid(row=0, column=1)
+        
+        
+        self.frame_left.grid(row=0, column=0)
+        self.scaleA.grid(row=0, column=0)
+        self.scaleF.grid(row=1, column=0)
+        self.scaleP.grid(row=2, column=0)
+        self.scaleHarmic.grid(row=3, column=0)
+        self.scale_sample.grid(row=4, column=0)
+        self.frame_bottom.grid(row=0, column=1)
+        self.frame_harmonics.pack(expand=True, fill="both", padx=10, pady=20)
+        self.pair_harmonic.grid(row=0, column=0, sticky="ew")
+        self.impair_harmonic.grid(row=0, column=1, sticky="ew")
+        self.all_harmonic.grid(row=0, column=2)
+        
+        # self.frame_model.pack(expand=True, fill="both", padx=10, pady=20)
+        # self.signal_x.grid(row=0, column=7, sticky="ew")
+        # self.signal_y.grid(row=0, column=8, sticky="ew")
+        # self.signal_xy.grid(row=0, column=9, sticky="ew")
         # self.scaleHarmic.pack()
 
 
