@@ -71,11 +71,11 @@ class View(Observer):
         self.create_grid_toplevel(8)
         x_values = [point[1] for point in self.signals['X']]
         y_values = [point[1] for point in self.signals['Y']]
-        xy = [[x_values[i], y_values[i]] for i in np.arange(len(x_values))]
-        print(xy)
+        self.xy = [[x_values[i], y_values[i]] for i in np.arange(len(x_values))]
+       
         # x= 
         self.plot_signal_toplevel(
-            signal=[x_values, y_values], color="blue")
+            signal=self.xy, color="blue")
 
 
     def get_name(self):
@@ -99,19 +99,24 @@ class View(Observer):
 
     def update(self, subject, isanimate=False):
         if subject.signal:
+            
             signals_list = []
             for key, value in self.signals.items():
                 signals_list.append(value)
 
             self.plot_signal(signal=subject.signal, color="yellow")
+            # self.plot_signal_toplevel(
+            #     signal=self.xy, color="blue")
             
 
     def plot_signal(self, name="X", signal=[], color={}):
         color = self.colors
         print("Generator.plot_signal()")
         print(len(self.signals))
+        
         for key, value in self.signals.items():
             if signal and len(signal) > 1:
+                
                 w, h = self.width, self.height
                 if self.screen.find_withtag(key):
                     self.screen.delete(key)
